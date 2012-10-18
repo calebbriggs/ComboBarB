@@ -8,13 +8,15 @@
 				datasource: [],
 				valueObject: 'value',
 				displayNameObject: 'displayName',
-				value: {}
-		},
+				value: {},			
+        },
         _create: function () {
 			var self = this,
 				o = self.options,
 				$el = self.element;
+				
 			o.spans = [];
+				
 			self._index = 0;
 			self._maxindex = o.datasource.length;
 				
@@ -29,10 +31,18 @@
                 .appendTo($el);
             this._input
                	.bind('focus', $.proxy(this._open, this));
-                //.bind('blur', $.proxy(this._close, this));
+            this._input
+			.bind('keydown', function(e){
+					if(e.keyCode == 9){
+						self._close();
+					}
+			});
 				
 			this._input
-				.bind('keyup', $.proxy(this._search, this));				
+				.bind('keyup', $.proxy(this._search, this))
+
+			$el
+				.bind('mouseleave',$.proxy(this._close, this));
 			
         },
 		
@@ -92,11 +102,7 @@
 					}
 					return false;
 				}
-				if(e.keycode == 9){	
-					self._close();
-					return false;
-				}
-										
+														
 				o.datasource = _.filter(o._datasource,function(data){
 					var dis = typeof data=="function" ? data() : data;
 					if(typeof dis == "object"){
@@ -156,6 +162,7 @@
 				if(dis == display){
 					span.addClass('ui-state-selected');
 				}
+				
 				spans.push(span);
 				div.append(span);
 			});
