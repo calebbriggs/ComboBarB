@@ -8,7 +8,8 @@
 				datasource: [],
 				valueObject: 'value',
 				displayNameObject: 'displayName',
-				value: {},			
+				value: {},	
+				change: function(){}
         },
         _create: function () {
 			var self = this,
@@ -41,12 +42,18 @@
 			this._input
 				.bind('keyup', $.proxy(this._search, this))
 
-			$el
-				.bind('mouseleave',$.proxy(this._close, this));
+			//$el
+				//.bind('mouseleave',$.proxy(this._close, this));
 			
         },
 		
-		_init: function() {
+		_init: function() {	
+			var self = this,
+				o = self.options,
+				$el = self.element;		
+			o._datasource = o.datasource;
+			self._maxindex = o.datasource.length;
+			self._index = 0;
 			this.refresh();
 		},
 		select: function(keycode){
@@ -148,7 +155,7 @@
 							o.value=val;
 						}
 					}
-					
+					o.change(data);
 					self._input.val(display);
 					self._close();
 				}				
@@ -172,6 +179,7 @@
             this._optionsDiv.show();
         },
         _close: function () {
+			this.refresh();
 			this._optionsDiv.hide();            
         },
 		
@@ -180,16 +188,14 @@
 				o = self.options,
 				$el = self.element;
 			
-			o._datasource = o.datasource;
-			self._maxindex = o.datasource.length;
-			self._index = 0;
 			var val = typeof o.value =="function" ? o.value() : o.value;
-			
-			if(typeof val == "object"){
-				self._input.val((val[o.displayNameObject] || ""));
-			}
-			else{
-				self._input.val((val || ""));
+			if(val){
+				if(typeof val == "object"){
+					self._input.val((val[o.displayNameObject] || ""));
+				}
+				else{
+					self._input.val((val || ""));
+				}
 			}
 		},
 

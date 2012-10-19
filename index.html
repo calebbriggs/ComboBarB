@@ -2,35 +2,72 @@
 	<head>
 			 
 		 <link rel="stylesheet" type="text/css" href="stylesheets/comboBarB.css">
-
-
 		  <script src="scripts/jquery-1.7.1.js" type="text/javascript"></script>
 		  <script src="scripts/jquery-ui-1.8.16.custom.js" type="text/javascript"></script>
-		  <script src="scripts/jquery.ui.widget.js" type="text/javascript"></script>
-		  <script src="scripts/jquery.ui.comboBarB.js" type="text/javascript"></script>
+		  <script src="scripts/knockout-2.0.0.js" type="text/javascript"></script>
+		  <script src="scripts/Knockout.JqueryUICustomBindings.js" type="text/javascript"></script>
 		  <script src="scripts/underscore-min.js" type="text/javascript"></script> 
+		  <script src="scripts/jquery.ui.comboBarB.js" type="text/javascript"></script>		 
 		  <script src="scripts/Names.js" type="text/javascript"></script>
 		  <script>			
-				var value = "";// check this in console as you change values built for Knockout JS but this is example of that
-				var getSetValue = function(val){
-					if(val)
-					{
-						value = val;
-					}
-					else{
-						return val;
-					}
-				}
+				var value = "";					
+								
+				var changeFunction = function(data){
+					console.log(data);//logging what gets passed to this fuction on change
+				};
 				
-				$('document').ready(function(){							
-					$('div').comboBarB({datasource: names, displayNameObject: 'Value', value: getSetValue});				
+				var viewmodel = {};
+				viewmodel.stringValue = ko.observable("");
+				viewmodel.objectValue = ko.observable();
+				
+				viewmodel.stringCombBarB = ko.computed(function(){
+					return{
+						 widget: "comboBarB",
+						 options: {
+							datasource : stringArray,
+							value: viewmodel.stringValue
+						 }
+					 }
+				});
+				viewmodel.objectCombBarB = ko.computed(function(){
+					return{
+						 widget: "comboBarB",
+						 options: {
+							datasource : names,
+							value: viewmodel.objectValue,
+							displayNameObject: 'Value',
+						 }
+					 }
+				});
+				
+				$('document').ready(function(){		
+					ko.applyBindings(viewmodel);
+					$('#basic-string-array').comboBarB({datasource: stringArray,  value: value, change: changeFunction});				
+					$('#basic-object-array').comboBarB({datasource: names, displayNameObject: 'Value', value: value, change: changeFunction});				
 				})
 		  </script>
 	</head>
 	<body>
 		<b> Basic Example</b>
 				
-		<div style="width:25%;"> Names (has 3300)</div>
+		<div id ="basic-string-array" style="width:25%;"> Strings </div>
+		<br/>
+		<br/>
+		<br/>
+		<div id ="basic-object-array" style="width:25%;"> Objects (has 3300)</div>
+		
+		<br/>
+		<br/>
+		
+		<b> Knockout Example</b>
+				
+		<div style="width:25%;" data-bind="jqueryui: stringCombBarB "> Strings </div>
+		<div data-bind="text: stringValue"></div>
+		<br/>
+		<br/>
+		<br/>
+		<div style="width:25%;" data-bind="jqueryui: objectCombBarB "> Objects (has 3300)</div>
+		<div data-bind="text: objectValue"></div>
 		
 	</body>
 </html>
